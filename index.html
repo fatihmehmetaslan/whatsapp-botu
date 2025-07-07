@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FPSOFT - Bot Yönetimi</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1565c0;
+      padding: 20px;
+      color: white;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-bottom: 4px solid #0d47a1;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    #controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      min-width: 150px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #addQuestion {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    #addQuestion:hover {
+      background-color: #388e3c;
+    }
+
+    #search {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    #message {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      display: none;
+    }
+
+    #message.success {
+      background-color: #d4edda;
+      color: #155724;
+      display: block;
+    }
+
+    #message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    li strong {
+      font-size: 16px;
+      display: block;
+      margin-bottom: 6px;
+      color: #333;
+    }
+
+    .btn-group {
+      margin-top: 8px;
+    }
+
+    .btn-delete {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: #d32f2f;
+    }
+
+    #qr-container {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: #eeeeee;
+      border: 1px dashed #bbb;
+      font-family: monospace;
+      white-space: pre-wrap;
+      border-radius: 8px;
+    }
+
+    #badiButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #1976d2;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    #badiButton:hover {
+      background-color: #0d47a1;
+    }
+
+    @media screen and (max-width: 600px) {
+      #controls {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>🤖 Bot Yönetim Paneli</header>
+
+  <main>
+    <div id="controls">
+      <input id="question" type="text" placeholder="Soru yazın…" />
+      <input id="answer" type="text" placeholder="Cevap yazın…" />
+      <button id="addQuestion">Ekle</button>
+    </div>
+
+    <input type="text" id="search" placeholder="Soru ara..." />
+
+    <div id="message"></div>
+
+    <h3>📝 Mevcut Sorular</h3>
+    <ul id="questionList"></ul>
+
+    <div id="qr-container"></div>
+  </main>
+
+  <button id="badiButton">💬 Badi'yi Aç</button>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    const qInput = document.getElementById('question');
+    const aInput = document.getElementById('answer');
+    const btn = document.getElementById('addQuestion');
+    const list = document.getElementById('questionList');
+    const msg = document.getElementById('message');
+    const qrContainer = document.getElementById('qr-container');
+    const searchInput = document.getElementById('search');
+
+    let questions = [];
+
+    function showMessage(text, type = 'success') {
+      msg.textContent = text;
+      msg.className = type;
+      msg.style.display = 'block';
+      setTimeout(() => {
+        msg.textContent = '';
+        msg.className = '';
+        msg.style.display = 'none';
+      }, 3000);
+    }
+
+    function renderItem(q) {
+      const li = document.createElement('li');
+      const title = document.createElement('strong');
+      title.textContent = q.question;
+      const answer = document.createElement('div');
+      answer.textContent = `Cevap: ${q.answer}`;
+      const group = document.createElement('div');
+      group.classList.add('btn-group');
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Sil';
+      delBtn.classList.add('btn-delete');
+      delBtn.addEventListener('click', () => {
+        ipcRenderer.invoke('deleteQuestion', { question: q.question })
+          .then(ok => {
+            if (ok) {
+              li.remove();
+              showMessage('Soru başarıyla silindi!', 'success');
+            } else {
+              showMessage('Silme işlemi başarısız.', 'error');
+            }
+          })
+          .catch(() => showMessage('Silme hatası.', 'error'));
+      });
+
+      group.appendChild(delBtn);
+      li.append(title, answer, group);
+      return li;
+    }
+
+    function renderQuestions() {
+      list.innerHTML = '';
+      questions.forEach(q => list.appendChild(renderItem(q)));
+    }
+
+    ipcRenderer.invoke('getQuestions')
+      .then(arr => {
+        questions = arr;
+        renderQuestions();
+      })
+      .catch(() => showMessage('Sorular yüklenemedi', 'error'));
+
+    btn.addEventListener('click', () => {
+      const question = qInput.value.trim();
+      const answer = aInput.value.trim();
+      if (!question) return showMessage('Lütfen bir soru girin!', 'error');
+      if (!answer) return showMessage('Lütfen bir cevap girin!', 'error');
+
+      ipcRenderer.invoke('addQuestion', { question, answer })
+        .then(ok => {
+          if (ok) {
+            questions.push({ question, answer });
+            renderQuestions();
+            qInput.value = '';
+            aInput.value = '';
+            showMessage('Soru & cevap başarıyla eklendi!', 'success');
+          } else {
+            showMessage('Bu soru zaten var.', 'error');
+          }
+        })
+        .catch(() => showMessage('Ekleme hatası.', 'error'));
+    });
+
+    ipcRenderer.on('show-qr', (_event, qrAscii) => {
+      qrContainer.textContent = qrAscii;
+    });
+
+    searchInput.addEventListener('input', () => {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const filteredQuestions = questions.filter(q =>
+        q.question.toLowerCase().includes(searchTerm)
+      );
+      list.innerHTML = '';
+      filteredQuestions.forEach(q => list.appendChild(renderItem(q)));
+    });
+
+    // Badi butonuna tıklanınca yeni pencere aç
+    document.getElementById('badiButton').addEventListener('click', () => {
+      ipcRenderer.send('open-chat-window');
+    });
+  </script>
+</body>
+</html>

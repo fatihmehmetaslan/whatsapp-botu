@@ -1,0 +1,130 @@
+[
+  {
+    "question": "nasılsın",
+    "answer": "Çok iyiyim, teşekkür ederim 😊 Size nasıl yardımcı olabilirim?"
+  },
+  {
+    "question": "merhaba",
+    "answer": "Merhaba! Hangi ürün hakkında bilgi almak istersiniz?"
+  },
+  {
+    "question": "selam",
+    "answer": "Selam! Size yardımcı olabileceğim bir konu var mı?"
+  },
+  {
+    "question": "Elinizde var mı ?",
+    "answer": "Stoklarımızda mevcuttur efendim!"
+  },
+  {
+    "question": "Elinizde mevcut mu ?",
+    "answer": "Stoklarımızda mevcuttur efendim!"
+  },
+  {
+    "question": "Stoklarınızda mevcut mudur?",
+    "answer": "Sizin için kontrol ediyorum"
+  },
+  {
+    "question": "Bedeni var mı?",
+    "answer": "Stoklarımızda mevcuttur efendim."
+  },
+  {
+    "question": "Bedeni mevcut mu?",
+    "answer": "Stoklarımızda mevcuttur efendim."
+  },
+  {
+    "question": "Elinizde var mı ?",
+    "answer": "Stoklarımızda mevcuttur efendim!"
+  },
+  {
+    "question": "Nasılsınız",
+    "answer": "Firmamız olarak iş süreçlerimizi en verimli şekilde sürdürüyoruz ve müşterilerimize en iyi hizmeti sunma çabası içerisindeyiz. Teşekkür ederiz, siz nasılsınız?"
+  },
+  {
+    "question": "Nasılsınız?",
+    "answer": "Firmamız olarak iş süreçlerimizi en verimli şekilde sürdürüyoruz ve müşterilerimize en iyi hizmeti sunma çabası içerisindeyiz. Teşekkür ederiz, siz nasılsınız?"
+  },
+  {
+    "question": "Merhaba, firmanız hakkında daha fazla bilgi alabilir miyim?",
+    "answer": "Tabii! Firmamız [firma adı] olarak [sektör] alanında hizmet vermekteyiz. Size nasıl yardımcı olabiliriz?"
+  },
+  {
+    "question": "Kargo süresi ne kadar?",
+    "answer": "Kargolarımız genellikle [kargo süresi] içinde teslim edilir. Sipariş durumunuzu öğrenmek için bizimle iletişime geçebilirsiniz."
+  },
+  {
+    "question": "Ürünleriniz/hizmetleriniz hakkında detaylı bilgi alabilir miyim?",
+    "answer": "Elbette! [Ürün/hizmet adı] hakkında detaylı bilgi almak isterseniz, [web sitesi ya da katalog bağlantısı] üzerinden inceleyebilirsiniz."
+  },
+  {
+    "question": "Şu anda kampanya veya indirim var mı?",
+    "answer": "Ürünlerimiz tek fiyat olup indirim yapılamamaktadır."
+  },
+  {
+    "question": "Siparişimi nasıl oluşturabilirim?",
+    "answer": "Siparişinizi [web sitesi,mağazamızdan satın alarak veya WhatsApp üzerinden direkt sipariş gibi] yöntemlerle oluşturabilirsiniz. Size yardımcı olmaktan mutluluk duyarız!"
+  },
+  {
+    "question": "Müşteri desteği sağlıyor musunuz?",
+    "answer": "Müşteri desteği sağlıyor musunuz?"
+  },
+  {
+    "question": "İade veya değişim şartlarınız nelerdir?",
+    "answer": "İade ve değişim politikamız [belirlenen süre ve şartlar] doğrultusunda işlemektedir. Detaylı bilgi için [web sitesi/bağlantı] sayfamızı ziyaret edebilirsiniz."
+  },
+  {
+    "question": "Mağazanız hangi saatlerde açık?",
+    "answer": "Mağazamız haftaiçi her gün saat 09:00-19:00 arası ,haftasonu 10:00-19:00 arasında hizmet vermektedir. Sizleri bekliyoruz!"
+  },
+  {
+    "question": "Hangi ürünleri satıyorsunuz?",
+    "answer": "Mağazamızda giyim kategorisinde birçok ürün bulunmaktadır. Detaylı ürün bilgisi için mağazamıza uğrayabilir veya web sitemizi ziyaret edebilirsiniz."
+  },
+  {
+    "question": "mağazanızda mevcut mu?",
+    "answer": "Stoklarımız her zaman hazır durumdadır. Gördüğünüz tüm ürünler parekende şeklinde satılmaktadır."
+  },
+  {
+    "question": "Yeni ürünler ne zaman geliyor?",
+    "answer": "Yeni koleksiyonlarımız ve stok güncellemelerimiz yapılmaktadır. Güncel bilgi için bizimle iletişime geçebilirsiniz!"
+  },
+  {
+    "question": "Hangi ödeme yöntemlerini kabul ediyorsunuz?",
+    "answer": "Mağazamızda nakit ile satış yapılmakta olup internet üzerinden alışverişlerinizde kredi kartı/banka kartı ile ödeme yapabilirsiniz!"
+  },
+  {
+    "question": "Teslimat süresi ne kadar?",
+    "answer": "Aynı gün kargo ile işlem yapılmaktadır."
+  },
+  {
+    "question": "Mağaza içi yardım sağlıyor musunuz?",
+    "answer": "Evet! Deneyimli ekibimiz, ürün seçiminden ödeme sürecine kadar size yardımcı olmaktan memnuniyet duyar."
+  },
+  {
+    "question": "Bu ürünün başka bir bedeni / rengi var mı ?",
+    "answer": "Stokları hemen kontrol ediyorum."
+  },
+  {
+    "question": "Bu üründe hangi malzemeler kullanılmıştır ?",
+    "answer": "Bu üründe %100 pamuk kullanılmıştır."
+  },
+  {
+    "question": "Ürün hakkında bilgi almak istiyorum",
+    "answer": "Tabi internet sitemize girerek ürün ve fiyat detaylarına ulaşabilirsiniz!"
+  },
+  {
+    "question": "Sen kimsin",
+    "answer": "Ben mağaza botu BADİ"
+  },
+  {
+    "question": "Adın ne",
+    "answer": "İsmim mağaza botu BADİ"
+  },
+  {
+    "question": "Adınız ne",
+    "answer": "İsmim mağaza botu BADİ"
+  },
+  {
+    "question": "İsmin ne",
+    "answer": "İsmim mağaza botu BADİ"
+  }
+]

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Badi - Chat</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #e3f2fd;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1976d2;
+      padding: 15px;
+      text-align: center;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      border-bottom: 3px solid #1565c0;
+    }
+
+    main {
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    #chatBox {
+      height: 400px;
+      overflow-y: auto;
+      background-color: #ffffff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      max-width: 75%;
+      word-wrap: break-word;
+      display: inline-block;
+    }
+
+    .user-message {
+      background-color: #c8e6c9;
+      align-self: flex-end;
+      text-align: right;
+      float: right;
+      clear: both;
+    }
+
+    .chatgpt-message {
+      background-color: #f1f1f1;
+      float: left;
+      clear: both;
+    }
+
+    #userInput {
+      width: calc(100% - 90px);
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    #sendButton {
+      padding: 10px 20px;
+      background-color: #43a047;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    #sendButton:hover {
+      background-color: #388e3c;
+    }
+
+    #clearMemoryButton, #exportButton {
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    #clearMemoryButton {
+      background-color: #e53935;
+      color: white;
+    }
+
+    #clearMemoryButton:hover {
+      background-color: #c62828;
+    }
+
+    #exportButton {
+      background-color: #1976d2;
+      color: white;
+    }
+
+    #exportButton:hover {
+      background-color: #1565c0;
+    }
+
+    .input-area {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    @media screen and (max-width: 600px) {
+      #userInput {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .input-area {
+        flex-direction: column;
+      }
+
+      #sendButton {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>🧠 BaDi ile Sohbet</header>
+
+  <main>
+    <button id="clearMemoryButton">🗑 Hafızayı Temizle</button>
+    <button id="exportButton">📄 PDF Olarak Kaydet</button>
+
+    <div id="chatBox"></div>
+
+    <div class="input-area">
+      <input id="userInput" type="text" placeholder="Mesajınızı yazın..." />
+      <button id="sendButton">Gönder</button>
+    </div>
+  </main>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    const chatBox = document.getElementById('chatBox');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    const clearMemoryButton = document.getElementById('clearMemoryButton');
+    const exportButton = document.getElementById('exportButton');
+
+    function appendMessage(content, sender) {
+      const div = document.createElement('div');
+      div.classList.add('message', sender === 'user' ? 'user-message' : 'chatgpt-message');
+      div.innerHTML = `<strong>${sender === 'user' ? 'Sen' : 'Badi'}:</strong> ${content}`;
+      chatBox.appendChild(div);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function loadChatHistory() {
+      const history = await ipcRenderer.invoke('getChatMemory');
+      chatBox.innerHTML = '';
+      history.forEach(msg => {
+        appendMessage(msg.content, msg.role);
+      });
+    }
+
+    async function loadPreviousConversationsFromFile() {
+      const content = await ipcRenderer.invoke('readChatFile');
+      if (content) {
+        await ipcRenderer.invoke('saveChatMessage', { role: 'system', content: `Geçmiş sohbet:\n${content}` });
+      }
+    }
+
+    async function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      appendMessage(message, 'user');
+      await ipcRenderer.invoke('saveChatMessage', { role: 'user', content: message });
+
+      userInput.value = '';
+
+      try {
+        const response = await ipcRenderer.invoke('ask-chatgpt', message);
+        appendMessage(response, 'assistant');
+        await ipcRenderer.invoke('saveChatMessage', { role: 'assistant', content: response });
+      } catch (err) {
+        const errorMsg = 'Üzgünüm, şu anda yardımcı olamıyorum.';
+        appendMessage(errorMsg, 'assistant');
+        await ipcRenderer.invoke('saveChatMessage', { role: 'assistant', content: errorMsg });
+      }
+    }
+
+    clearMemoryButton.addEventListener('click', async () => {
+      const confirmed = confirm("Tüm geçmiş silinecek. Emin misin?");
+      if (!confirmed) return;
+      await ipcRenderer.invoke('clearChatMemory');
+      chatBox.innerHTML = '';
+    });
+
+    exportButton.addEventListener('click', async () => {
+      const text = await ipcRenderer.invoke('exportChatToText');
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `badi_sohbet.txt`;
+      a.click();
+    });
+
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    loadChatHistory();
+    loadPreviousConversationsFromFile();
+  </script>
+
+</body>
+</html>
